@@ -48,10 +48,10 @@ static char *termkey_func_seq[] = {
     [12]       = "\e[24~",
 };
 
-static int unicode_ctrl_raw[] = {
-    ['h'] = 1,
-    ['i'] = 1,
-    ['m'] = 1,
+static int unicode_ctrl_raw[256] = {
+    ['H'] = 1,
+    ['I'] = 1,
+    ['M'] = 1,
     ['['] = 1
 };
 
@@ -66,18 +66,25 @@ termkey_ktos(TermKey *tk, char *buf, size_t len, TermKeyKey *key) {
                 strcpy(buf, key->utf8);
             return l;
             
-        } else if (key->modifiers == TERMKEY_KEYMOD_CTRL &&
-                   (key->code.codepoint >= ARRAY_LENGTH(unicode_ctrl_raw) ||
-                    unicode_ctrl_raw[key->code.codepoint] == 0)) {
-            
-            if (len >= 2) {
-                buf[0] = key->code.codepoint - 'a' + 1;
-                buf[1] = 0;
-            }
+        }
 
-            return 1;
-            
-        } else if (key->modifiers == TERMKEY_KEYMOD_ALT) {
+        if (key->modifiers == TERMKEY_KEYMOD_CTRL) {
+            int cp = key->code.codepoint;
+            if (cp >= 'a' && cp <= 'z') cp = cp + 'A' - 'a';
+
+            if (cp >= 0x40 && cp <= 0x5F &&
+                unicode_ctrl_raw[cp] == 0) {
+                
+                if (len >= 2) {
+                    buf[0] = cp - 0x40;
+                    buf[1] = 0;
+                }
+                
+                return 1;
+            }            
+        }
+
+        if (key->modifiers == TERMKEY_KEYMOD_ALT) {
             
             int l = strlen(key->utf8);
             if (len > l + 1) {

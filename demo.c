@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
   TermKeyFormat format = TERMKEY_FORMAT_VIM;
 
   char buffer[50];
+  char seqbuf[50];
   TermKey *tk;
 
   int opt;
@@ -63,6 +64,17 @@ int main(int argc, char *argv[])
   while((ret = termkey_waitkey(tk, &key)) != TERMKEY_RES_EOF) {
     if(ret == TERMKEY_RES_KEY) {
       termkey_strfkey(tk, buffer, sizeof buffer, &key, format);
+      int l = termkey_ktos(tk, seqbuf, sizeof seqbuf, &key);
+
+      if (l == 1)
+          printf("%x ", seqbuf[0]);
+      else {
+          printf("\\e ");
+          for (int i = 1; i < l; ++ i) {
+              printf("%c ", seqbuf[i]);
+          }
+      }
+      
       if(key.type == TERMKEY_TYPE_MOUSE) {
         int line, col;
         termkey_interpret_mouse(tk, &key, NULL, NULL, &line, &col);

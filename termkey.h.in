@@ -230,6 +230,7 @@ typedef enum {
 
 size_t      termkey_strfkey(TermKey *tk, char *buffer, size_t len, TermKeyKey *key, TermKeyFormat format);
 const char *termkey_strpkey(TermKey *tk, const char *str, TermKeyKey *key, TermKeyFormat format);
+int         termkey_ktos(TermKey *tk, char *buffer, size_t len, TermKeyKey *key);
 
 int termkey_keycmp(TermKey *tk, const TermKeyKey *key1, const TermKeyKey *key2);
 

@@ -32,7 +32,7 @@ else
   LDFLAGS+=-lncurses
 endif
 
-OBJECTS=termkey.lo driver-csi.lo driver-ti.lo
+OBJECTS=termkey.lo driver-csi.lo driver-ti.lo ktos.lo
 LIBRARY=libtermkey.la
 
 DEMOS=demo demo-async

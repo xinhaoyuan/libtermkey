@@ -4,8 +4,9 @@
 
 #define KC_DEFAULT        0
 #define KC_C0_SYMBOL      1
-#define KC_SPECIAL_SYMBOL 2
-#define KC_ARROW_SYMBOL   3
+#define KC_C0_SYMBOL_F    2
+#define KC_SPECIAL_SYMBOL 3
+#define KC_ARROW_SYMBOL   4
 
 #ifndef ARRAY_LENGTH
 #define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -18,7 +19,7 @@ static struct {
     [TERMKEY_SYM_BACKSPACE] = { "\x08", KC_C0_SYMBOL },
     [TERMKEY_SYM_TAB]       = { "\x09", KC_C0_SYMBOL },
     [TERMKEY_SYM_ENTER]     = { "\x0d", KC_C0_SYMBOL },
-    [TERMKEY_SYM_ESCAPE]    = { "\x1b", KC_C0_SYMBOL },
+    [TERMKEY_SYM_ESCAPE]    = { "\x1b", KC_C0_SYMBOL_F },
     [TERMKEY_SYM_SPACE]     = { "\x20", KC_C0_SYMBOL },
     [TERMKEY_SYM_DEL]       = { "\x7f", KC_C0_SYMBOL },
     [TERMKEY_SYM_UP]        = { "\e[A", KC_ARROW_SYMBOL },
@@ -107,8 +108,12 @@ termkey_ktos(TermKey *tk, char *buf, size_t len, TermKeyKey *key) {
             int   category = termkey_sym_book[key->code.sym].category;
             char *keyseq   = termkey_sym_book[key->code.sym].seq;
             int   l        = strlen(keyseq);
-            
-            if (key->modifiers) {
+
+            if (category == KC_C0_SYMBOL_F) {
+                return snprintf(buf, len, "\e[%d;%du",
+                                keyseq[0], 1 + key->modifiers);
+            }
+            else if (key->modifiers) {
                 switch (category) {
                 case KC_C0_SYMBOL:
                     if (key->modifiers == TERMKEY_KEYMOD_ALT) {

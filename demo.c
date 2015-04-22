@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
   int mouse = 0;
   int mouse_proto = 0;
-  TermKeyFormat format = TERMKEY_FORMAT_VIM;
+  TermKeyFormat format = 0; // TERMKEY_FORMAT_VIM;
 
   char buffer[50];
   char seqbuf[50];
